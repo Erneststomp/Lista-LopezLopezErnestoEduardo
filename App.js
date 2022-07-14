@@ -11,7 +11,7 @@ export default function App() {
 
   const onHndlerChangeItem=(text)=>setTextItem(text)
   const onHndlerAddItem=()=>{
-    setItemList(currentItems=>[...currentItems,{id:itemList.length,value:textItem}])
+    setItemList(currentItems=>[...currentItems,{id:itemList.length,value:textItem,status:'undone'}])
     setTextItem('')
   }
   const onHndlerDeleteItem=id=>{
@@ -25,25 +25,50 @@ export default function App() {
   }
 
 
+      const CheckItem = (object) => {
+        const newState = itemList.map(obj => {
+          if (obj === object) {
+            if(obj.status==='done'){
+              return {...obj, status: 'undone'};
+              }
+              else{
+                return {...obj, status: 'done'};
+              }
+          } 
+          else{
+            return {...obj};
+          }
+        });
+    
+        setItemList(newState);
+      };
+
+
 
 
   return (
     
     <View style={styles.container}>
-      <Modal animationType='slide' transparent={true} visible={modalVisible}>
-        <View>
-          <Text>Modal</Text>
-        </View>
-        <View>
-          <Text>
-            Estas seguro de que deseas borrar?
-          </Text>
-        </View>
-        <View>
-          <Text>{itemSelected.value}</Text>
-        </View>
-        <View>
-          <Button onPress={()=>onHndlerDeleteItem(itemSelected.id)} title='Confirmar'/>
+      <Modal  animationType='slide' transparent={true} visible={modalVisible}>
+        <View style={styles.modals}>
+          <View style={styles.modalsview}> 
+          
+          <View>
+            <Text>Modal</Text>
+          </View>
+          <View>
+            <Text>
+              Estas seguro de que deseas borrar?
+            </Text>
+          </View>
+          <View>
+            <Text>{itemSelected.value}</Text>
+          </View>
+          <View>
+            <Button onPress={()=>onHndlerDeleteItem(itemSelected.id)} title='Confirmar'/>
+          </View>
+            
+          </View>
         </View>
       </Modal>
 
@@ -56,9 +81,9 @@ export default function App() {
         renderItem={data=>(
           <TouchableOpacity onPress={()=>onHndlerModal(data.item.id)}>
             <View style={styles.textdeployer}>  
-              <BouncyCheckbox value={isSelected} onValueChange={setSelection} style={styles.checkbox}/> 
+              <BouncyCheckbox onPress={()=>CheckItem(data.item)} value={isSelected}  style={styles.checkbox}/> 
                 <Text style={styles.textdeploy}>
-                  <Text style={styles.textout}>{data.item.value} </Text>
+                  <Text style={styles.textout}>{data.item.value}</Text>
                 </Text>
             </View>
             
@@ -127,5 +152,24 @@ const styles = StyleSheet.create({
     paddingLeft:'2%',
     fillColor:"red",
     unfillColor:"#FFFFFF"
-  }
+  }, 
+    modals: {
+      flex:1,
+      justifyContent:'center',
+      alignItems:'center',
+      flexDirection:'column'
+
+
+  },
+  modalsview: {
+    backgroundColor:'aliceblue',
+    width:'80%',
+    height:'50%',
+    borderRadius:10,
+    padding:'10%',
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'column'
+},
+
 });
